@@ -28,7 +28,7 @@ namespace PredatorPreyVisualizer
         {
         }
 
-        public Perceptron Perceptron { get; set;  } = new SingleLayerPerceptron(4, 2);
+        public Perceptron Perceptron { get; set;  } = new SingleLayerPerceptron(5, 2);
 
         public override string Name => "Hare";
 
@@ -40,7 +40,8 @@ namespace PredatorPreyVisualizer
                 Position.X,
                 Position.Y,
                 Other.Position.X,
-                Other.Position.Y
+                Other.Position.Y,
+                distanceFromWall()
                 );
 
             Perceptron.Run();
@@ -52,6 +53,16 @@ namespace PredatorPreyVisualizer
                 return new Vector2D(0, 0);
 
             return new Vector2D(x, y);
+        }
+        private double distanceFromWall()
+        {
+
+            double distanceX = Arena.Width - Position.X;
+            double distanceY = Arena.Height - Position.Y;
+            double min1 = Math.Min(distanceY, distanceX);
+            double min2 = Math.Min(Position.X, Position.Y);
+            return Math.Min(min1, min2);
+
         }
     }
 }

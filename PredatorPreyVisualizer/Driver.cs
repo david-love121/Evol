@@ -21,33 +21,58 @@ namespace PredatorPreyVisualizer
             Display();
         }
 
-        static private Perceptron bestPerceptron = new SingleLayerPerceptron(4, 2);
+        static private Perceptron bestPerceptron = new SingleLayerPerceptron(5, 2);
 
         static private void Process()
         {
             // Here you can make a new perceptron
-            var perceptron = new SingleLayerPerceptron(4, 2);
+            const int tests = 1000;
+            double highRange = 5;
+            double lowRange = 2;
+            double bestTime = RunArena(bestPerceptron);
+            for (int i = 0; i < tests; i++)
+            {
+                var testPerceptron = bestPerceptron.RandomClone(highRange);
+                var newTime = RunArena(testPerceptron);
+                if (newTime > bestTime)
+                {
+                    bestTime = newTime;
+                    bestPerceptron = testPerceptron;
+                    Console.WriteLine($"New best time found - {bestTime} - Test {i}");
+                }
+            }
+            for (int i = 0; i < tests; i++)
+            {
+                var testPerceptron = bestPerceptron.RandomClone(lowRange);
+                var newTime = RunArena(testPerceptron);
+                if (newTime > bestTime)
+                {
+                    bestTime = newTime;
+                    bestPerceptron = testPerceptron;
+                    Console.WriteLine($"New best time found - {bestTime} - Test {i}");
+                }
+            }
 
             // Here is where you do stuff to the Perceptron
-            perceptron.RandomWeights(5);
+            //perceptron.RandomWeights(5);
 
             // Here is how you copy a Perceptron
-            var clone = perceptron.Clone();
+            //var clone = perceptron.Clone();
 
             // Here is how you make a copy with random variation in weights
-            var randomClone = perceptron.RandomClone(4);
+            //var randomClone = perceptron.RandomClone(4);
 
             // This is how you run the simulation
-            double timeToDie = RunArena(perceptron);
+            //double timeToDie = RunArena(perceptron);
 
             // And if you like how things went, this is how to set the perceptron
-            bestPerceptron = perceptron.Clone();
+            
         }
         static private double RunArena(Perceptron perceptron)
         {
             var arena = new PredatorPreyEngine(xSize, ySize, perceptron.Clone());
             bool keepRunning = true;
-            while (keepRunning)
+            while (keepRunning && arena.Time < 1000)
             {
                 var set = arena.Tick(arena.Time + timeStep);
                 keepRunning = !arena.Hares[0].IsDead;
